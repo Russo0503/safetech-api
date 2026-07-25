@@ -1,0 +1,51 @@
+{
+  "cabecalho": {
+    "empresa_razao": "Sismat Solucoes Integradas em Seguranca e Meio Ambiente do Trabalho",
+    "empresa_cnpj": "00.018.575/0001-31",
+    "cliente_razao": "",
+    "cliente_cnpj": "",
+    "funcao": "Soldador",
+    "jornada": "Segunda a Sexta | 07h00 as 17h00",
+    "cidade": "Piracicaba",
+    "uf": "SP",
+    "emissao": "25/07/2026",
+    "revisao_num": "0",
+    "revisao_data": "25/07/2026",
+    "elaborado_por": "Luiz Roberto Russo – Eng. Seg. – Crea/SP 0600758386",
+    "descricao_atividades": "Execucao de soldagem eletrica MIG, MMA e TIG em estruturas metalicas e tubulacoes. Preparacao de superficies com esmerilhamento. Eventual trabalho em altura acima de 2,0 m.",
+    "colaboradores": [
+      {"nome": "Carlos Eduardo Pereira", "cpf": "111.222.333-44"},
+      {"nome": "Marcos Antonio da Silva", "cpf": "222.333.444-55"}
+    ],
+    "responsavel_tecnico_nome": "Luiz Roberto Russo",
+    "responsavel_tecnico_doc_label": "CREA/SP",
+    "responsavel_tecnico_doc_numero": "0600758386"
+  },
+  "rodape_profissional": "Sismat SST | Eng. Luiz Roberto Russo – CREA/SP 0600758386 | russo@sismat.eng.br",
+  "itens": [
+    {
+      "atividade": "Soldagem eletrica MIG/MMA/TIG",
+      "perigo": "Ruido continuo e intermitente",
+      "dano": "PAIR; Hipertensao; Estresse cronico",
+      "medidas": "Protetor auditivo plug com CA valido. Treinamento NR 6 realizado.",
+      "prob": 2, "sev": 2,
+      "recomendacoes": "Implantar PCA. Realizar audiometria periodica. Prazo: 30 dias."
+    },
+    {
+      "atividade": "Soldagem de acos inoxidavel",
+      "perigo": "Fumos metalicos (Cr VI, Ni) – LINACH Grupo 1",
+      "dano": "Pneumoconiose; Cancer de pulmao",
+      "medidas": "SEM exaustao local. SEM respirador adequado.",
+      "prob": 4, "sev": 4,
+      "recomendacoes": "SUSPENDER soldagem de inox ate implantacao de exaustao local. Prazo: IMEDIATO."
+    },
+    {
+      "atividade": "Soldagem em andaimes acima de 2,0 m",
+      "perigo": "Trabalho em Altura – queda",
+      "dano": "Fratura grave; Trauma craniano; Morte",
+      "medidas": "SEM cinto paraquedista. SEM ponto de ancoragem.",
+      "prob": 4, "sev": 4,
+      "recomendacoes": "SUSPENDER trabalho em altura ate fornecimento de cinto e treinamento NR 35. Prazo: IMEDIATO."
+    }
+  ]
+}
