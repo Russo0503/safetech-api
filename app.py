@@ -13,6 +13,18 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.units import cm
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 from reportlab.pdfbase.pdfmetrics import stringWidth
+from reportlab.lib.utils import ImageReader
+from urllib.request import urlopen
+
+def carregar_imagem_url(url):
+    if not url:
+        return None
+    try:
+        with urlopen(url, timeout=6) as resp:
+            dados = resp.read()
+        return ImageReader(io.BytesIO(dados))
+    except Exception:
+        return None
 
 app = Flask(__name__)
 
@@ -109,8 +121,13 @@ def tabela_kv4(cab, styles, doc_width, label_w=4.5*cm):
     kv = [
         ("Razao Social",    cab.get("empresa_razao","")),
         ("CNPJ (Empresa)",  cab.get("empresa_cnpj","")),
-        ("Cliente",         cab.get("cliente_razao","")),
-        ("CNPJ (Cliente)",  cab.get("cliente_cnpj","")),
+    ]
+    cliente_razao = cab.get("cliente_razao","")
+    cliente_cnpj  = cab.get("cliente_cnpj","")
+    if cliente_razao or cliente_cnpj:
+        kv.append(("Cliente", cliente_razao))
+        kv.append(("CNPJ (Cliente)", cliente_cnpj))
+    kv += [
         ("Funcao",          cab.get("funcao","")),
         ("Jornada",         cab.get("jornada","")),
         ("Cidade/UF",       f"{cab.get('cidade','')}/{cab.get('uf','')}"),
@@ -214,6 +231,8 @@ def gerar_apr_pdf(cabecalho, itens, rascunho=False,
         leftMargin=1.5*cm, rightMargin=1.5*cm,
         topMargin=4.2*cm,  bottomMargin=1.2*cm
     )
+    img_cliente = carregar_imagem_url(cabecalho.get("logo_cliente_url"))
+    img_elaboradora = carregar_imagem_url(cabecalho.get("logo_elaboradora_url"))
 
     def on_page(canvas, _doc):
         pw, ph = _doc.pagesize
@@ -237,6 +256,20 @@ def gerar_apr_pdf(cabecalho, itens, rascunho=False,
         canvas.setFont("Helvetica-Bold", 15)
         canvas.setFillColor(colors.HexColor(theme_hex))
         canvas.drawCentredString(pw/2.0, ph-1.7*cm, titulo)
+        # Logos no cabecalho
+        logo_h, logo_max_w = 2.2*cm, 4.5*cm
+        if img_cliente:
+            iw, ih = img_cliente.getSize()
+            escala = min(logo_max_w/iw, logo_h/ih)
+            w, h = iw*escala, ih*escala
+            canvas.drawImage(img_cliente, L, ph-0.5*cm-h, width=w, height=h,
+                              preserveAspectRatio=True, mask='auto')
+        if img_elaboradora:
+            iw, ih = img_elaboradora.getSize()
+            escala = min(logo_max_w/iw, logo_h/ih)
+            w, h = iw*escala, ih*escala
+            canvas.drawImage(img_elaboradora, pw-R-w, ph-0.5*cm-h, width=w, height=h,
+                              preserveAspectRatio=True, mask='auto')
 
         # Linha separadora
         canvas.setStrokeColor(colors.HexColor("#DDDDDD"))
@@ -297,6 +330,7 @@ def gerar_apr_pdf(cabecalho, itens, rascunho=False,
     }
 
     rec_items = []
+    rec_counter = 0
 
     for idx, it in enumerate(itens_p, 1):
         formula   = f"{it['prob']}x{it['sev']}={it['score']}"
@@ -313,9 +347,10 @@ def gerar_apr_pdf(cabecalho, itens, rascunho=False,
         elif grau == "Intoleravel":
             rec_cell = Paragraph("ATIVIDADE\nSUSPENSA", styles["CellRed"])
         else:
-            rec_cell = Paragraph(f"Ver Rec. {idx}", styles["CellOrange"])
+            rec_counter += 1
+            rec_cell = Paragraph(f"Ver Rec. {rec_counter}", styles["CellOrange"])
             if rec_text:
-                rec_items.append((idx, it.get("atividade",""), rec_text))
+                rec_items.append((rec_counter, it.get("atividade",""), rec_text))
 
         data_tbl.append([
             P(it.get("atividade",""),  styles),
