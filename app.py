@@ -117,7 +117,9 @@ def split_elaborado(cab):
     return nome, crea
 
 def tabela_kv4(cab, styles, doc_width, label_w=4.5*cm):
-    nome_elab, crea_elab = split_elaborado(cab)
+    nome_elab = cab.get("responsavel_tecnico_nome") or split_elaborado(cab)[0]
+    crea_elab = cab.get("responsavel_tecnico_doc_numero") or split_elaborado(cab)[1]
+    crea_label = cab.get("responsavel_tecnico_doc_label") or "Crea/SP"
     kv = [
         ("Razao Social",    cab.get("empresa_razao","")),
         ("CNPJ (Empresa)",  cab.get("empresa_cnpj","")),
@@ -135,7 +137,7 @@ def tabela_kv4(cab, styles, doc_width, label_w=4.5*cm):
         ("Revisao",         str(cab.get("revisao_num","0"))),
         ("Data de Revisao", cab.get("revisao_data","")),
         ("Elaborado por",   nome_elab),
-        ("Crea/SP",         crea_elab),
+        (crea_label,        crea_elab),
     ]
     pair_w = doc_width / 2.0
     val_w  = pair_w - label_w
@@ -343,7 +345,7 @@ def gerar_apr_pdf(cabecalho, itens, rascunho=False,
         grau = it["classificacao"]
         rec_text = it.get("recomendacoes","")
         if grau == "Toleravel":
-            rec_cell = Paragraph("-", styles["CellCenter"])
+            rec_cell = Paragraph("Manter as medidas de controle existentes.", styles["CellCenter"])
         elif grau == "Intoleravel":
             rec_cell = Paragraph("ATIVIDADE\nSUSPENSA", styles["CellRed"])
         else:
