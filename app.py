@@ -217,7 +217,7 @@ def tabela_responsavel(styles, doc_width, nome, doc_num, doc_label="CREA/SP",
 
 def gerar_apr_pdf(cabecalho, itens, rascunho=False,
                   theme_hex="#093A8B",
-                  rodape_plataforma="Gerado pela plataforma Safetech SST | www.safetech.com.br",
+                  rodape_plataforma="Safetech Brasil Ltda - CNPJ 62.462.256/0001-78 - Proprietaria do aplicativo Safetech SST | www.safetech.com.br",
                   rodape_profissional="",
                   titulo="APR - Analise Preliminar de Riscos"):
 
