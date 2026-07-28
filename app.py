@@ -15,7 +15,7 @@ from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.lib.utils import ImageReader
 from urllib.request import urlopen
-
+from reportlab.pdfgen.canvas import Canvas
 def carregar_imagem_url(url):
     if not url:
         return None
@@ -214,7 +214,23 @@ def tabela_responsavel(styles, doc_width, nome, doc_num, doc_label="CREA/SP",
         ("RIGHTPADDING",(0,0),(-1,-1),1),
     ]))
     return tbl
+class RascunhoCanvas(Canvas):
+    def __init__(self, *args, mostrar_marca_dagua=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._mostrar_marca_dagua = mostrar_marca_dagua
 
+    def showPage(self):
+        if self._mostrar_marca_dagua:
+            pw, ph = self._pagesize
+            self.saveState()
+            self.setFillColor(colors.Color(0.9, 0.1, 0.1, alpha=0.35))
+            self.setFont("Helvetica-Bold", 72)
+            self.translate(pw/2, ph/2)
+            self.rotate(45)
+            self.drawCentredString(0, 0, "RASCUNHO")
+            self.drawCentredString(0, -80, "Safetech SST")
+            self.restoreState()
+        super().showPage()
 def gerar_apr_pdf(cabecalho, itens, rascunho=False,
                   theme_hex="#093A8B",
                   rodape_plataforma="Safetech Brasil Ltda - CNPJ 62.462.256/0001-78 - Proprietaria do aplicativo Safetech SST | www.safetech.com.br",
@@ -243,17 +259,7 @@ def gerar_apr_pdf(cabecalho, itens, rascunho=False,
         canvas.setFillColor(colors.white)
         canvas.rect(0,0,pw,ph,stroke=0,fill=1)
 
-        # Marca d'agua para rascunho
-        if rascunho:
-            canvas.saveState()
-            canvas.setFillColor(colors.Color(0.9, 0.1, 0.1, alpha=0.25))
-            canvas.setFont("Helvetica-Bold", 72)
-            canvas.translate(pw/2, ph/2)
-            canvas.rotate(45)
-            canvas.drawCentredString(0, 0, "RASCUNHO")
-            canvas.drawCentredString(0, -80, "Safetech SST")
-            canvas.restoreState()
-
+           
         # Titulo
         canvas.setFont("Helvetica-Bold", 15)
         canvas.setFillColor(colors.HexColor(theme_hex))
@@ -433,7 +439,10 @@ def gerar_apr_pdf(cabecalho, itens, rascunho=False,
         styles["NormalSmall"]
     ))
 
-    doc.build(elems, onFirstPage=on_page, onLaterPages=on_page)
+    doc.build(
+        elems, onFirstPage=on_page, onLaterPages=on_page,
+        canvasmaker=lambda *a, **kw: RascunhoCanvas(*a, mostrar_marca_dagua=rascunho, **kw),
+    )
     buffer.seek(0)
     return buffer
 
