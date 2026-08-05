@@ -130,14 +130,16 @@ def tabela_kv4(cab, styles, doc_width, label_w=4.5*cm):
         kv.append(("Cliente", cliente_razao))
         kv.append(("CNPJ (Cliente)", cliente_cnpj))
     kv += [
-        ("Funcao",          cab.get("funcao","")),
-        ("Jornada",         cab.get("jornada","")),
-        ("Cidade/UF",       f"{cab.get('cidade','')}/{cab.get('uf','')}"),
-        ("Emissao",         cab.get("emissao","")),
-        ("Revisao",         str(cab.get("revisao_num","0"))),
+        ("Funcao", cab.get("funcao","")),
+        ("Jornada", cab.get("jornada","")),
+        ("Inicio da Tarefa", cab.get("hora_inicio_tarefa","")),
+        ("Previsao de Termino", cab.get("previsao_termino","")),
+        ("Cidade/UF", f"{cab.get('cidade','')}/{cab.get('uf','')}"),
+        ("Emissao", cab.get("emissao","")),
+        ("Revisao", str(cab.get("revisao_num","0"))),
         ("Data de Revisao", cab.get("revisao_data","")),
-        ("Elaborado por",   nome_elab),
-        (crea_label,        crea_elab),
+        ("Elaborado por", nome_elab),
+        (crea_label, crea_elab),
     ]
     pair_w = doc_width / 2.0
     val_w  = pair_w - label_w
@@ -167,8 +169,8 @@ def sig_line(w, font="Helvetica", size=8.5):
     uw = max(1e-6, stringWidth("_", font, size))
     return "_" * max(8, int((w-2)/uw))
 
-def tabela_colaboradores(styles, doc_width, colaboradores, label_w=2.4*cm,
-                          ratios=(0.44,0.22,0.34)):
+def tabela_colaboradores(styles, doc_width, colaboradores, label_w=2.0*cm,
+                          ratios=(0.30,0.20,0.16,0.34)):
     par_w = [doc_width * r for r in ratios]
     val_w = [max(1.0*cm, pw - label_w) for pw in par_w]
     rows = []
@@ -176,12 +178,14 @@ def tabela_colaboradores(styles, doc_width, colaboradores, label_w=2.4*cm,
         rows.append([
             Paragraph("Colaborador:", styles["LabelCellBlue"]),
             Paragraph(esc(col.get("nome","")), styles["ValueCellTight"]),
+            Paragraph("Funcao:", styles["LabelCellBlue"]),
+            Paragraph(esc(col.get("funcao","")), styles["ValueCellTight"]),
             Paragraph("CPF:", styles["LabelCellBlue"]),
             Paragraph(esc(col.get("cpf","")), styles["ValueCellTight"]),
             Paragraph("Assinatura:", styles["LabelCellBlue"]),
-            Paragraph(sig_line(val_w[2]), styles["ValueCellTight"]),
+            Paragraph(sig_line(val_w[3]), styles["ValueCellTight"]),
         ])
-    tbl = Table(rows, colWidths=[label_w,val_w[0],label_w,val_w[1],label_w,val_w[2]],
+    tbl = Table(rows, colWidths=[label_w,val_w[0],label_w,val_w[1],label_w,val_w[2],label_w,val_w[3]],
                 hAlign="CENTER")
     tbl.setStyle(TableStyle([
         ("VALIGN",(0,0),(-1,-1),"MIDDLE"),
