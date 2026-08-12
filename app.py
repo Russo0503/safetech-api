@@ -219,10 +219,10 @@ def tabela_responsavel(styles, doc_width, nome, doc_num, doc_label="CREA/SP",
     ]))
     return tbl
 class RascunhoCanvas(Canvas):
-    def __init__(self, *args, mostrar_marca_dagua=False, **kwargs):
+    def __init__(self, *args, mostrar_marca_dagua=False, rastreio_conta="", **kwargs):
         super().__init__(*args, **kwargs)
         self._mostrar_marca_dagua = mostrar_marca_dagua
-
+        self._rastreio_conta = rastreio_conta
     def showPage(self):
         if self._mostrar_marca_dagua:
             pw, ph = self._pagesize
@@ -233,13 +233,17 @@ class RascunhoCanvas(Canvas):
             self.rotate(45)
             self.drawCentredString(0, 0, "RASCUNHO")
             self.drawCentredString(0, -80, "Safetech SST")
+            if self._rastreio_conta:
+                self.setFont("Helvetica", 18)
+                self.drawCentredString(0, -130, self._rastreio_conta)
             self.restoreState()
         super().showPage()
 def gerar_apr_pdf(cabecalho, itens, rascunho=False,
                   theme_hex="#093A8B",
-                  rodape_plataforma="Safetech Brasil Ltda - CNPJ 62.462.256/0001-78 - Proprietaria do aplicativo Safetech SST | www.safetech.com.br",
+                  rodape_plataforma="Safetech Brasil Ltda - CNPJ 62.462.256/0001-78 - Proprietaria do aplicativo Safetech SST | [www.safetech.com.br](https://www.safetech.com.br)",
                   rodape_profissional="",
-                  titulo="APR - Analise Preliminar de Riscos"):
+                  titulo="APR - Analise Preliminar de Riscos",
+                  rastreio_conta=""):
 
     styles  = build_styles(theme_hex)
     itens_p = aplicar_matriz(itens)
@@ -445,7 +449,7 @@ def gerar_apr_pdf(cabecalho, itens, rascunho=False,
 
     doc.build(
         elems, onFirstPage=on_page, onLaterPages=on_page,
-        canvasmaker=lambda *a, **kw: RascunhoCanvas(*a, mostrar_marca_dagua=rascunho, **kw),
+        canvasmaker=lambda *a, **kw: RascunhoCanvas(*a, mostrar_marca_dagua=rascunho, rastreio_conta=rastreio_conta, **kw),
     )
     buffer.seek(0)
     return buffer
@@ -465,11 +469,13 @@ def gerar_rascunho():
         cabecalho = data.get("cabecalho", {})
         itens     = data.get("itens", [])
         rodape_prof = data.get("rodape_profissional", "")
+        rastreio_conta = data.get("rastreio_conta", "")
 
         buffer = gerar_apr_pdf(
             cabecalho, itens,
             rascunho=True,
-            rodape_profissional=rodape_prof
+            rodape_profissional=rodape_prof,
+            rastreio_conta=rastreio_conta
         )
 
         nome_arquivo = f"RASCUNHO_APR_{cabecalho.get('funcao','').replace(' ','_')}.pdf"
