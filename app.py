@@ -170,7 +170,7 @@ def sig_line(w, font="Helvetica", size=8.5):
     return "_" * max(8, int((w-2)/uw))
 
 def tabela_colaboradores(styles, doc_width, colaboradores, label_w=2.0*cm,
-                          ratios=(0.30,0.20,0.16,0.34)):
+                          ratios=(0.28,0.18,0.20,0.34)):
     par_w = [doc_width * r for r in ratios]
     val_w = [max(1.0*cm, pw - label_w) for pw in par_w]
     rows = []
@@ -181,7 +181,7 @@ def tabela_colaboradores(styles, doc_width, colaboradores, label_w=2.0*cm,
             Paragraph("Funcao:", styles["LabelCellBlue"]),
             Paragraph(esc(col.get("funcao","")), styles["ValueCellTight"]),
             Paragraph("CPF:", styles["LabelCellBlue"]),
-            Paragraph(esc(col.get("cpf","")), styles["ValueCellTight"]),
+            Paragraph(sig_line(val_w[2]), styles["ValueCellTight"]),
             Paragraph("Assinatura:", styles["LabelCellBlue"]),
             Paragraph(sig_line(val_w[3]), styles["ValueCellTight"]),
         ])
