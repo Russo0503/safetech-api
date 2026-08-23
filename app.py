@@ -170,7 +170,7 @@ def sig_line(w, font="Helvetica", size=8.5):
     return "_" * max(8, int((w-2)/uw))
 
 def tabela_colaboradores(styles, doc_width, colaboradores, label_w=2.0*cm,
-                          ratios=(0.28,0.18,0.20,0.34)):
+                          ratios=(0.24,0.22,0.22,0.32)):
     par_w = [doc_width * r for r in ratios]
     val_w = [max(1.0*cm, pw - label_w) for pw in par_w]
     rows = []
