@@ -189,8 +189,8 @@ def tabela_colaboradores(styles, doc_width, colaboradores, label_w=2.0*cm,
                 hAlign="CENTER")
     tbl.setStyle(TableStyle([
         ("VALIGN",(0,0),(-1,-1),"MIDDLE"),
-        ("TOPPADDING",(0,0),(-1,-1),1.5),
-        ("BOTTOMPADDING",(0,0),(-1,-1),1.5),
+        ("TOPPADDING",(0,0),(-1,-1),5),
+        ("BOTTOMPADDING",(0,0),(-1,-1),5),
         ("LEFTPADDING",(0,0),(-1,-1),1),
         ("RIGHTPADDING",(0,0),(-1,-1),1),
     ]))
